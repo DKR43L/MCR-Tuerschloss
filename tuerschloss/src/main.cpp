@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <lcd1602.h>
+#include <servo.h>
 
 lcd1602 lcd; //the display object
 
