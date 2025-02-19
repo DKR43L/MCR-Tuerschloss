@@ -1,18 +1,14 @@
 #include <Arduino.h>
+#include <lcd1602.h>
 
-// put function declarations here:
-int myFunction(int, int);
+lcd1602 lcd; //the display object
 
 void setup() {
   // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  lcd.setupLCD();  
+  
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
 }
