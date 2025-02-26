@@ -5,7 +5,7 @@
 #include <MFRC522.h>
 #include <SPI.h>
 
-#define RST_PIN 22    // Reset-Pin des RFID-Moduls
+#define RST_PIN 34    // Reset-Pin des RFID-Moduls
 #define SS_PIN 5      // Slave-Select-Pin des RFID-Moduls
 #define RELAY_PIN 25  // Pin für das Relais
 
