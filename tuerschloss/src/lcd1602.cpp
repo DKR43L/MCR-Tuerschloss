@@ -14,6 +14,8 @@ void lcd1602::setCursor(int x, int y) {
 }
 
 void lcd1602::print(String message) {
+    lcd->clear();
+    lcd->setCursor(0, 0);
     lcd->print(message);
 }
 
