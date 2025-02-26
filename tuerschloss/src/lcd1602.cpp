@@ -1,4 +1,5 @@
 #include "lcd1602.h"
+#include <Wire.h>
 
 
 lcd1602::lcd1602() {
@@ -17,6 +18,7 @@ void lcd1602::print(String message) {
     lcd->print(message);
 }   
 void lcd1602::setupLCD() {
+    Wire.begin(21,16);
     lcd->init();
     lcd->backlight();
     lcd->clear();

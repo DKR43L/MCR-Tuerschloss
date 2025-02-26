@@ -11,8 +11,8 @@ char keys[ROW_NUM][COLUMN_NUM] = {
 };
 
 // Define the row and column pins
-uint8_t pin_rows[ROW_NUM] = {19, 18, 5, 17};
-uint8_t pin_column[COLUMN_NUM] = {16, 4, 0, 2};
+uint8_t pin_rows[ROW_NUM] = {12, 14, 27, 26};
+uint8_t pin_column[COLUMN_NUM] = {25, 33, 32, 35};
 
 // Initialize the Keypad library
 Keypad keypad(makeKeymap(keys), pin_rows, pin_column, ROW_NUM, COLUMN_NUM);

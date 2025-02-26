@@ -1,28 +1,16 @@
 #include <servo.h>
 
-ServoControl::ServoControl(int servoPin, int buttonPin)
-    : _servoPin(servoPin), _buttonPin(buttonPin), _pos(0), _buttonState(false), _lastButtonState(false) {}
+ServoControl::ServoControl(int servoPin)
+    : _servoPin(servoPin), _pos(0) {}
 
 void ServoControl::begin()
 {
-    Serial.begin(115200);
-    pinMode(_buttonPin, INPUT_PULLUP);
-    _myServo.attach(_servoPin);
-    _myServo.write(_pos);
+    _myServo.attach(_servoPin); // Servo wird an den angegebenen Pin angeschlossen
+    _myServo.write(_pos);       // Startet mit Position 0° (verriegelt)
 }
 
-void ServoControl::update()
+void ServoControl::setPosition(int pos)
 {
-    _buttonState = digitalRead(_buttonPin) == LOW;
-
-    if (_buttonState != _lastButtonState)
-    {
-        if (_buttonState)
-        {
-            _pos = (_pos == 0) ? 90 : 0;
-            _myServo.write(_pos);
-            delay(500);
-        }
-        _lastButtonState = _buttonState;
-    }
+    _pos = pos;
+    _myServo.write(_pos); // Bewegt den Servo auf die angegebene Position
 }
