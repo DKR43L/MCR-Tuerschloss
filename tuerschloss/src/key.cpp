@@ -12,7 +12,7 @@ char keys[ROW_NUM][COLUMN_NUM] = {
 
 // Define the row and column pins
 uint8_t pin_rows[ROW_NUM] = {12, 14, 27, 26};
-uint8_t pin_column[COLUMN_NUM] = {25, 33, 32, 35};
+uint8_t pin_column[COLUMN_NUM] = {25, 33, 32, 15};
 
 // Initialize the Keypad library
 Keypad keypad(makeKeymap(keys), pin_rows, pin_column, ROW_NUM, COLUMN_NUM);
@@ -26,6 +26,11 @@ DoorState currentState = STATE_LOCKED;
 
 // State machine function
 void state_machine(Transition transition) {
+    Serial.print("Aktueller Zustand vor Übergang: ");
+    Serial.println(currentState); // Debugging: Zustand vor Änderung
+    Serial.print("Übergang: ");
+    Serial.println(transition);
+
     switch (currentState) {
         case STATE_LOCKED:
             if (transition == CODE_CORRECT) {
@@ -35,57 +40,71 @@ void state_machine(Transition transition) {
             break;
 
         case STATE_UNLOCKED:
-            if (transition == OPEN_DOOR) {
-                currentState = STATE_OPEN;
-                Serial.println("State changed to: OPEN");
-            } else if (transition == AUTO_LOCK) {
+            if(transition == CODE_INCORRECT)
+            {
                 currentState = STATE_LOCKED;
-                Serial.println("State changed to: LOCKED");
             }
+            // if (transition == OPEN_DOOR) {
+            //     currentState = STATE_OPEN;
+            //     Serial.println("State changed to: OPEN");
+            // } else if (transition == AUTO_LOCK) {
+            //     currentState = STATE_LOCKED;
+            //     Serial.println("State changed to: LOCKED");
+            // }
+            // else if(transition == CODE_INCORRECT)
+            // {
+            //     currentState = STATE_LOCKED;
+            // }
             break;
 
-        case STATE_OPEN:
-            if (transition == CLOSE_DOOR) {
-                currentState = STATE_CLOSED;
-                Serial.println("State changed to: CLOSED");
-            }
-            break;
+        // case STATE_OPEN:
+        //     if (transition == CLOSE_DOOR) {
+        //         currentState = STATE_CLOSED;
+        //         Serial.println("State changed to: CLOSED");
+        //     }
+        //     else if(transition == CODE_INCORRECT)
+        //     {
+        //         currentState = STATE_LOCKED;
+        //     }
+        //     break;
 
-        case STATE_CLOSED:
-            if (transition == AUTO_LOCK) {
-                currentState = STATE_LOCKED;
-                Serial.println("State changed to: LOCKED");
-            }
+        // case STATE_CLOSED:
+        //     if (transition == AUTO_LOCK) {
+        //         currentState = STATE_LOCKED;
+        //         Serial.println("State changed to: LOCKED");
+        //     }
             break;
     }
+    Serial.print("Neuer Zustand nach Übergang: ");
+    Serial.println(currentState); // Debugging: Zustand nach Änderung
 }
 
 // Function to handle keypad input
 void handleKeypadInput() {
+    static unsigned long unlockTime = 0; // Zeitpunkt des Entriegelns
+
     char key = keypad.getKey();
 
     if (key) {
-        if (key == '#') { // '#' is used to submit the input
+        if (key == '#') { // '#' bestätigt die Eingabe
             if (input == password) {
-                Serial.println("Access granted!");
-                state_machine(CODE_CORRECT); // Transition to UNLOCKED state
+                state_machine(CODE_CORRECT);
+                unlockTime = millis(); // Zeitpunkt speichern
             } else {
-                Serial.println("Access denied!");
-                state_machine(CODE_INCORRECT); // Stay in LOCKED state
+                state_machine(CODE_INCORRECT);
             }
-            input = ""; // Reset the input after submission
-        } else if (key == '*') { // '*' is used to clear the input
+            input = ""; // Eingabe zurücksetzen
+        } else if (key == '*') { // '*' löscht die Eingabe
             input = "";
             Serial.println("Input cleared.");
-        } else { // Append the key to the input
+        } else { // Zeichen hinzufügen
             input += key;
             Serial.println("Current input: " + input);
         }
     }
 
-    // Simulate auto-locking after some time
-    if (currentState == STATE_UNLOCKED) {
-        delay(5000);
-        state_machine(AUTO_LOCK);
-    }
+    // Auto-Lock nach 5 Sekunden
+    // if (currentState == STATE_UNLOCKED && millis() - unlockTime >= 5000) {
+    //     state_machine(AUTO_LOCK);
+    // }
 }
